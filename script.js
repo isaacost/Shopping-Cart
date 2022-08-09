@@ -1,5 +1,6 @@
 const items = document.querySelector('.items');
 const cartItems = document.querySelector('.cart__items');
+const botaoLimpar = document.querySelector('.empty-cart');
 
 const createProductImageElement = (imageSource) => {
   const img = document.createElement('img');
@@ -20,6 +21,14 @@ const getSkuFromProductItem = (item) => item.querySelector('span.item__sku').inn
 const cartItemClickListener = (event) => {
   cartItems.removeChild(event.target);
 };
+
+const limpaCarrinho = () => {
+  while (cartItems.firstChild) {
+    cartItems.removeChild(cartItems.firstChild);
+  }
+};
+
+botaoLimpar.addEventListener('click', limpaCarrinho);
 
 const createCartItemElement = ({ sku, name, salePrice }) => {
   const li = document.createElement('li');

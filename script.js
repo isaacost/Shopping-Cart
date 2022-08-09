@@ -28,7 +28,6 @@ const getSkuFromProductItem = (item) => item.querySelector('span.item__sku').inn
 
 const cartItemClickListener = (event) => {
   // coloque seu código aqui
-    // coloque seu código aqui
 };
 
 const createCartItemElement = ({ sku, name, salePrice }) => {
@@ -39,4 +38,19 @@ const createCartItemElement = ({ sku, name, salePrice }) => {
   return li;
 };
 
-window.onload = () => { };
+const items = document.querySelector('.items');
+const nova = async () => {
+  const resultado = await fetchProducts('computador');
+  resultado.results.forEach((elemento) => {
+    const { id: sku, title: name, thumbnail: image } = elemento;
+    const produto = {
+      sku,
+      name,
+      image,
+    };
+    const sectionProduto = createProductItemElement(produto);
+    items.appendChild(sectionProduto);
+  });
+};
+
+window.onload = () => { nova(); };

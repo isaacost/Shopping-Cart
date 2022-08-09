@@ -18,7 +18,7 @@ const createCustomElement = (element, className, innerText) => {
 const getSkuFromProductItem = (item) => item.querySelector('span.item__sku').innerText;
 
 const cartItemClickListener = (event) => {
-  // codigo aqui
+  cartItems.removeChild(event.target);
 };
 
 const createCartItemElement = ({ sku, name, salePrice }) => {
@@ -39,6 +39,7 @@ const funcQ4 = async (evento) => {
     salePrice,
   };
   const novoItem = createCartItemElement(produto);
+  
   cartItems.appendChild(novoItem);
 };
 

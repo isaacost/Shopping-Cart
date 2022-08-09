@@ -24,7 +24,7 @@ describe('1 - Teste a função fetchProducts', () => {
   it('Verifique se o retorno da função fetchProducts com o argumento computador é uma estrutura de dados igual ao objeto computadorSearch', async () => {
     expect.assertions(1);
     expect(await fetchProducts('computador')).toEqual(computadorSearch);
-  })
+  });
 
   it('Verifique se ao chamar a função fetchProducts sem argumento retorna um erro', async () => {
     try {
@@ -33,5 +33,5 @@ describe('1 - Teste a função fetchProducts', () => {
     } catch (error) {
       expect(error).toEqual(new Error('You must provide an url'));
     }
-  })
+  });
 });

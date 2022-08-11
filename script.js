@@ -108,8 +108,17 @@ botaoLimpar.addEventListener('click', () => {
   somaCarrinho();
 });
 
-window.onload = async () => {
+const addCarregando = async () => {
+  const p = document.createElement('p');
+  p.innerText = 'caregando...';
+  p.className = 'loading';
+  items.appendChild(p);
   await funcQ2();
+  items.firstChild.remove();
+};
+
+window.onload = async () => {
+  await addCarregando();
   localStorageProdutos = JSON.parse(getSavedCartItems('cartItems')) || [];
   funcQ8(localStorageProdutos);
   somaCarrinho();

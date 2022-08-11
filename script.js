@@ -1,6 +1,7 @@
 const items = document.querySelector('.items');
 const cartItems = document.querySelector('.cart__items');
 const botaoLimpar = document.querySelector('.empty-cart');
+const valorTotal = document.querySelector('.total-price');
 
 let localStorageProdutos = []; // cria um array vazio
 
@@ -18,18 +19,26 @@ const createCustomElement = (element, className, innerText) => {
   return e;
 };
 
+const somaCarrinho = () => {
+  const total = localStorageProdutos.reduce((acc, produto) => acc + (produto.salePrice), 0);
+  valorTotal.innerText = total.toPrecision();
+};
+
 const getSkuFromProductItem = (item) => item.querySelector('span.item__sku').innerText;
 
-const cartItemClickListener = (event) => {
+const cartItemClickListener = (event, sku) => {
   cartItems.removeChild(event.target);
-  localStorageProdutos = localStorageProdutos.filter((elemento) => elemento !== event.target); // faz um filter no array, criando um novo array com os elementos que forem diferentes do local do evento
+  const itemIndex = localStorageProdutos.findIndex((item) => item.id === sku);
+  localStorageProdutos.splice(itemIndex, 1);
+  somaCarrinho();
+  saveCartItems(JSON.stringify(localStorageProdutos));
 };
 
 const createCartItemElement = ({ sku, name, salePrice }) => {
   const li = document.createElement('li');
   li.className = 'cart__item';
   li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
-  li.addEventListener('click', cartItemClickListener);
+  li.addEventListener('click', (event) => cartItemClickListener(event, sku));
   return li;
 };
 
@@ -42,6 +51,7 @@ const funcQ4 = async (evento) => {
   cartItems.appendChild(novoItem);
   localStorageProdutos.push(produto); // salva o produto no array
   saveCartItems(JSON.stringify(localStorageProdutos)); // salva no localStorage no formato de string
+  somaCarrinho();
   };
 
 const createProductItemElement = ({ sku, name, image }) => {
@@ -72,22 +82,26 @@ const funcQ2 = async () => {
   });
 };
 
-const funcQ8 = () => {
-  const local = JSON.parse(getSavedCartItems() || '[]'); // retorna os objetos salvos no localStorage no formato JSON ou vazio
-  local.forEach((element) => {
-    const produto = createCartItemElement(element); // cria esse elemento no carrinho quando a pagina é carregada
-    cartItems.appendChild(produto); // apenda o elemento anterior 
+const funcQ8 = (produtos) => {
+  produtos.forEach((produto) => {
+    const produtoSalvo = createCartItemElement(produto);
+    cartItems.appendChild(produtoSalvo);
   });
+  somaCarrinho();
 };
 
-const limpaCarrinho = () => {
+botaoLimpar.addEventListener('click', () => {
+  localStorageProdutos = [];
+  saveCartItems(JSON.stringify(localStorageProdutos));
   while (cartItems.firstChild) {
     cartItems.removeChild(cartItems.firstChild);
   }
-};
-botaoLimpar.addEventListener('click', limpaCarrinho);
+  somaCarrinho();
+});
 
 window.onload = async () => {
   await funcQ2();
-  funcQ8();
+  localStorageProdutos = JSON.parse(getSavedCartItems('cartItems')) || [];
+  funcQ8(localStorageProdutos);
+  somaCarrinho();
 };

@@ -1,7 +1,7 @@
 const items = document.querySelector('.items');
 const cartItems = document.querySelector('.cart__items');
 const botaoLimpar = document.querySelector('.empty-cart');
-const valorTotal = document.querySelector('.total-price');
+const totalPrice = document.querySelector('.total-price');
 
 let localStorageProdutos = []; // cria um array vazio
 
@@ -19,26 +19,35 @@ const createCustomElement = (element, className, innerText) => {
   return e;
 };
 
+const arrayPrecos = () => {
+  const produtos = cartItems.children;
+  const resultado = [];
+  for (let i = 0; i < produtos.length; i += 1) {
+    const preco = Number(produtos[i].innerText.split('PRICE: $')[1]);
+    resultado.push(preco);
+  }
+  return resultado;
+};
+
 const somaCarrinho = () => {
-  const total = localStorageProdutos.reduce((acc, produto) => acc + (produto.salePrice), 0);
-  valorTotal.innerText = total.toPrecision();
+  const precos = arrayPrecos();
+  const valorTotal = precos.reduce((acc, preco) => acc + preco, 0);
+  totalPrice.innerText = valorTotal.toPrecision();
 };
 
 const getSkuFromProductItem = (item) => item.querySelector('span.item__sku').innerText;
 
-const cartItemClickListener = (event, sku) => {
+const cartItemClickListener = (event) => {
   cartItems.removeChild(event.target);
-  const itemIndex = localStorageProdutos.findIndex((item) => item.id === sku);
-  localStorageProdutos.splice(itemIndex, 1);
+  localStorageProdutos = localStorageProdutos.filter((item) => item !== event.target);
   somaCarrinho();
-  saveCartItems(JSON.stringify(localStorageProdutos));
 };
 
 const createCartItemElement = ({ sku, name, salePrice }) => {
   const li = document.createElement('li');
   li.className = 'cart__item';
   li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
-  li.addEventListener('click', (event) => cartItemClickListener(event, sku));
+  li.addEventListener('click', (event) => cartItemClickListener(event));
   return li;
 };
 
